@@ -9,6 +9,9 @@ WORKDIR /app
 # Клонируем Hermes
 RUN git clone --depth 1 --recurse-submodules https://github.com/NousResearch/hermes-agent.git .
 
+# Устанавливаем пакет hermes
+RUN pip install --no-cache-dir --editable .
+
 # Устанавливаем основные зависимости
 RUN pip install --no-cache-dir --upgrade pip && \
     pip install --no-cache-dir \
