@@ -10,7 +10,8 @@ WORKDIR /app
 RUN git clone --depth 1 --recurse-submodules https://github.com/NousResearch/hermes-agent.git .
 
 # Устанавливаем основные зависимости
-RUN pip install --no-cache-dir \
+RUN pip install --no-cache-dir --upgrade pip && \
+    pip install --no-cache-dir \
     groq \
     python-telegram-bot \
     fastapi \
@@ -19,8 +20,16 @@ RUN pip install --no-cache-dir \
     aiohttp \
     requests
 
-# Пытаемся установить локально если есть setup.py
-RUN if [ -f setup.py ]; then pip install --no-cache-dir -e .; elif [ -f pyproject.toml ]; then pip install --no-cache-dir -e .; fi || true
+# Удаляем локальные зависимости из requirements или setup.py
+RUN if [ -f setup.py ]; then \
+        # Попытаемся установить без локальных зависимостей
+        pip install --no-cache-dir --no-deps . || true; \
+    fi && \
+    if [ -f requirements.txt ]; then \
+        # Удаляем строки с локальными path зависимостями
+        grep -v "^\./" requirements.txt | grep -v "^-e \." > requirements_clean.txt && \
+        pip install --no-cache-dir -r requirements_clean.txt || true; \
+    fi
 
 # Node зависимости (опционально)
 RUN npm install 2>/dev/null || true
