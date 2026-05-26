@@ -9,7 +9,7 @@ WORKDIR /app
 # Клонируем Hermes
 RUN git clone --depth 1 --recurse-submodules https://github.com/NousResearch/hermes-agent.git .
 
-# Устанавливаем пакет hermes
+# Устанавливаем пакет hermes-agent
 RUN pip install --no-cache-dir --editable .
 
 # Устанавливаем основные зависимости
@@ -43,5 +43,5 @@ ENV TELEGRAM_BOT_TOKEN=""
 ENV GATEWAY_ALLOW_ALL_USERS="true"
 ENV PORT=7860
 
-# Запускаем Python приложение (замени на правильную точку входа)
-CMD ["python", "-m", "hermes.gateway"]
+# Запускаем Python приложение — используем hermes_cli.gateway (правильное имя)
+CMD ["python", "-m", "hermes_cli.gateway"]
